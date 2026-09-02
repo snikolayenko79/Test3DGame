@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+// Обязательно добавляем пространство имен новой Input System
+using UnityEngine.InputSystem; 
 
 public class ClickDestroy : MonoBehaviour
 {
@@ -17,16 +19,18 @@ public class ClickDestroy : MonoBehaviour
         meshRenderer = GetComponent<Renderer>();
         audioSource = GetComponent<AudioSource>();
         objCollider = GetComponent<Collider>();
-        mainCamera = Camera.main; // Находим главную камеру
+        mainCamera = Camera.main; // Ищет камеру с тегом MainCamera
     }
 
     private void Update()
     {
-        // Если уже исчезает, клики не обрабатываем
         if (isDisappearing) return;
 
-        // Проверяем нажатие левой кнопки мыши (работает и в старой, и в новой Input System)
-        if (Input.GetMouseButtonDown(0))
+        // Проверяем существование указателя (мыши или тача)
+        if (Pointer.current == null) return;
+
+        // Была ли нажата кнопка/сделан тач в этом кадре
+        if (Pointer.current.press.wasPressedThisFrame)
         {
             CheckClick();
         }
@@ -34,11 +38,14 @@ public class ClickDestroy : MonoBehaviour
 
     private void CheckClick()
     {
-        // Создаем луч из камеры через точку курсора на экране
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        // Получаем позицию курсора через новую Input System
+        Vector2 mousePosition = Pointer.current.position.ReadValue();
+        
+        // Строим луч из камеры
+        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        // Проверяем, попал ли луч в коллайдер этого конкретного объекта
+        // Проверяем попадание по коллайдеру
         if (Physics.Raycast(ray, out hit))
         {
             if (hit.collider == objCollider)
