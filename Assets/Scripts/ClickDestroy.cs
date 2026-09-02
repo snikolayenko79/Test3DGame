@@ -1,12 +1,11 @@
 using System.Collections;
 using UnityEngine;
-// Обязательно добавляем пространство имен новой Input System
-using UnityEngine.InputSystem; 
 
 public class ClickDestroy : MonoBehaviour
 {
-    [Header("Настройки эффекта")]
-    [SerializeField] private float fadeDuration = 1.0f; // Время растворения в секундах
+    [Header("Настройки эффектов")]
+    [SerializeField] private ParticleSystem explosionParticles; // Сюда перетащим префаб партиклов
+    [SerializeField] private float fadeDuration = 1.0f;          // Время растворения
 
     private Renderer meshRenderer;
     private AudioSource audioSource;
@@ -19,18 +18,14 @@ public class ClickDestroy : MonoBehaviour
         meshRenderer = GetComponent<Renderer>();
         audioSource = GetComponent<AudioSource>();
         objCollider = GetComponent<Collider>();
-        mainCamera = Camera.main; // Ищет камеру с тегом MainCamera
+        mainCamera = Camera.main;
     }
 
     private void Update()
     {
         if (isDisappearing) return;
 
-        // Проверяем существование указателя (мыши или тача)
-        if (Pointer.current == null) return;
-
-        // Была ли нажата кнопка/сделан тач в этом кадре
-        if (Pointer.current.press.wasPressedThisFrame)
+        if (Input.GetMouseButtonDown(0))
         {
             CheckClick();
         }
@@ -38,14 +33,9 @@ public class ClickDestroy : MonoBehaviour
 
     private void CheckClick()
     {
-        // Получаем позицию курсора через новую Input System
-        Vector2 mousePosition = Pointer.current.position.ReadValue();
-        
-        // Строим луч из камеры
-        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        // Проверяем попадание по коллайдеру
         if (Physics.Raycast(ray, out hit))
         {
             if (hit.collider == objCollider)
@@ -59,16 +49,29 @@ public class ClickDestroy : MonoBehaviour
     {
         isDisappearing = true;
 
+        // 1. Спавним партиклы взрыва в точке нахождения куба
+        if (explosionParticles != null)
+        {
+            // Создаем систему частиц на сцене
+            ParticleSystem spawnedParticles = InstantiatingParticles();
+            spawnedParticles.Play();
+            
+            // Настраиваем автоматическое удаление объекта партиклов, когда они закончатся
+            Destroy(spawnedParticles.gameObject, spawnedParticles.main.duration + spawnedParticles.main.startLifetime.constantMax);
+        }
+
         if (audioSource != null && audioSource.clip != null)
         {
             audioSource.Play();
         }
 
-        if (objCollider != null)
-        {
-            objCollider.enabled = false;
-        }
+Destroy(gameObject);
+yield break;
 
+        // Отключаем коллайдер, чтобы больше не кликать
+        if (objCollider != null) objCollider.enabled = false;
+
+        // 2. Плавное растворение остатков куба
         if (meshRenderer != null)
         {
             Material mat = meshRenderer.material;
@@ -82,8 +85,12 @@ public class ClickDestroy : MonoBehaviour
                 mat.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
                 yield return null;
             }
+            
+            // Скрываем куб полностью после растворения, пока доигрывает звук
+            meshRenderer.enabled = false;
         }
 
+        // 3. Ждем окончания звука
         if (audioSource != null && audioSource.clip != null)
         {
             while (audioSource.isPlaying)
@@ -93,5 +100,11 @@ public class ClickDestroy : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    // Хелпер для красивого создания эффекта
+    private ParticleSystem InstantiatingParticles()
+    {
+        return Instantiate(explosionParticles, transform.position, transform.rotation);
     }
 }
