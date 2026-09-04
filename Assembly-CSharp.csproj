@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\TestDelegate2.cs" />
     <Compile Include="Assets\Scripts\ClickDestroy.cs" />
+    <Compile Include="Assets\Scripts\PaddleController.cs" />
+    <Compile Include="Assets\Scripts\Ball.cs" />
     <Compile Include="Assets\Scripts\TestDelegate1.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity 6000.3.23f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
