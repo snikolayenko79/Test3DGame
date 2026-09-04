@@ -5,7 +5,7 @@ public class ClickDestroy : MonoBehaviour
 {
     [Header("Настройки эффектов")]
     [SerializeField] private ParticleSystem explosionParticles; // Сюда перетащим префаб партиклов
-    [SerializeField] private float fadeDuration = 1.0f;          // Время растворения
+    //[SerializeField] private float fadeDuration = 1.0f;          // Время растворения
 
     private Renderer meshRenderer;
     private AudioSource audioSource;
@@ -65,41 +65,39 @@ public class ClickDestroy : MonoBehaviour
             audioSource.Play();
         }
 
-Destroy(gameObject);
-yield break;
-
-        // Отключаем коллайдер, чтобы больше не кликать
-        if (objCollider != null) objCollider.enabled = false;
-
-        // 2. Плавное растворение остатков куба
-        if (meshRenderer != null)
-        {
-            Material mat = meshRenderer.material;
-            Color originalColor = mat.color;
-            float elapsedTime = 0f;
-
-            while (elapsedTime < fadeDuration)
-            {
-                elapsedTime += Time.deltaTime;
-                float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
-                mat.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-                yield return null;
-            }
-            
-            // Скрываем куб полностью после растворения, пока доигрывает звук
-            meshRenderer.enabled = false;
-        }
-
-        // 3. Ждем окончания звука
-        if (audioSource != null && audioSource.clip != null)
-        {
-            while (audioSource.isPlaying)
-            {
-                yield return null;
-            }
-        }
+        // // Отключаем коллайдер, чтобы больше не кликать
+        // if (objCollider != null) objCollider.enabled = false;
+        //
+        // // 2. Плавное растворение остатков куба
+        // if (meshRenderer != null)
+        // {
+        //     Material mat = meshRenderer.material;
+        //     Color originalColor = mat.color;
+        //     float elapsedTime = 0f;
+        //
+        //     while (elapsedTime < fadeDuration)
+        //     {
+        //         elapsedTime += Time.deltaTime;
+        //         float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
+        //         mat.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+        //         yield return null;
+        //     }
+        //     
+        //     // Скрываем куб полностью после растворения, пока доигрывает звук
+        //     meshRenderer.enabled = false;
+        // }
+        //
+        // // 3. Ждем окончания звука
+        // if (audioSource != null && audioSource.clip != null)
+        // {
+        //     while (audioSource.isPlaying)
+        //     {
+        //         yield return null;
+        //     }
+        // }
 
         Destroy(gameObject);
+        yield break;
     }
 
     // Хелпер для красивого создания эффекта
