@@ -4,44 +4,32 @@ public class BallController : MonoBehaviour
 {
     [SerializeField] private BallMovement ballMovement;
     [SerializeField] private BallCollisionHandler collisionHandler;
+    private Rigidbody ballRigidbody;
 
-    private void OnEnable()
+    private void Awake()
     {
-        collisionHandler.OnBallCollision += HandleCollision;
+        ballRigidbody = ballMovement.GetComponent<Rigidbody>();
     }
 
-    private void OnDisable()
-    {
-        collisionHandler.OnBallCollision -= HandleCollision;
-    }
+    private void OnEnable() => collisionHandler.OnBallCollision += HandleCollision;
+    private void OnDisable() => collisionHandler.OnBallCollision -= HandleCollision;
 
     private void Start()
     {
         // Запускаем мяч (для XZ плоскости)
         ballMovement.Launch(new Vector3(5f, 0f, 10f));
     }
-
+    
     private void HandleCollision(Collision collision)
     {
-        // Проверяем, можно ли нанести урон объекту (DIP в действии - зависим от абстракции IDamageable, а не от класса Brick)
-        if (collision.gameObject.TryGetComponent<IDamageable>(out var damageable))
-        {
-            damageable.TakeDamage();
-        }
+        // Берем первую точку контакта для точности физики
+        ContactPoint contact = collision.GetContact(0);
 
-        // Логика изменения угла отскока от платформы
-        if (collision.gameObject.TryGetComponent<PaddleController>(out var paddle))
+        // Ищем любой компонент, который умеет реагировать на удар мяча
+        if (collision.gameObject.TryGetComponent<IBallHitResponder>(out var responder))
         {
-            //RedirectBallFromPaddle(collision.transform);
+            // Просто передаем управление самому объекту
+            responder.HandleBallHit(ballRigidbody, contact);
         }
-    }
-
-    private void RedirectBallFromPaddle(Transform paddleTransform)
-    {
-        float hitPoint = paddleTransform.position.x - ballMovement.transform.position.x;
-        Vector3 currentVelocity = ballMovement.GetComponent<Rigidbody>().linearVelocity;
-        currentVelocity.x = -hitPoint * 2f;
-        
-        ballMovement.Launch(currentVelocity);
     }
 }

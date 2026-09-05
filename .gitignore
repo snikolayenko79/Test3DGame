@@ -1,1 +1,2 @@
 /Library
+Assets/Scripts/using UnityEngine;  public interface IBallHitResponder {      Каждый объект сам решает, как реагировать на мяч,       и при необходимости может изменить его Rigidbody (например, поменять угол)     void HandleBallHIHitBallResponder.cs

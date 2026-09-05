@@ -52,7 +52,9 @@
     <Compile Include="Assets\Scripts\PaddleController.cs" />
     <Compile Include="Assets\Scripts\TestDelegate1.cs" />
     <Compile Include="Assets\Scripts\BallMovement.cs" />
+    <Compile Include="Assets\Scripts\LoseZone.cs" />
     <Compile Include="Assets\Scripts\BallCollisionHandler.cs" />
+    <Compile Include="Assets\Scripts\IHitBallResponder.cs" />
     <Compile Include="Assets\Scripts\BallController.cs" />
     <Compile Include="Assets\Scripts\Brick.cs" />
     <Reference Include="UnityEngine">
