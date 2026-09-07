@@ -8,10 +8,6 @@ public class GameInitializer : MonoBehaviour
     {
         // Ищем компонент ввода на сцене (или создаем его)
         IInputEventSource input = paddle.GetComponent<IInputEventSource>();
-
-        if (input == null)
-            input = gameObject.AddComponent<KeyboardInputSource>();
-        
         if (input != null)
         {
             paddle.InitializeInput(input);

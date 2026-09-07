@@ -58,8 +58,10 @@
     <Compile Include="Assets\Scripts\BallCollisionHandler.cs" />
     <Compile Include="Assets\Scripts\IHitBallResponder.cs" />
     <Compile Include="Assets\Scripts\GameInitializer.cs" />
+    <Compile Include="Assets\Scripts\Input\NewInputSystemSource.cs" />
     <Compile Include="Assets\Scripts\BallController.cs" />
     <Compile Include="Assets\Scripts\Brick.cs" />
+    <Compile Include="Assets\Scripts\Input\GameControls.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity 6000.3.23f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
