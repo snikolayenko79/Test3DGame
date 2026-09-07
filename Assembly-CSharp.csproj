@@ -47,6 +47,8 @@
     <Analyzer Include="C:\Program Files\Unity 6000.3.23f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Input\IInputEventSource.cs" />
+    <Compile Include="Assets\Scripts\Input\KeyboardInputSource.cs" />
     <Compile Include="Assets\Scripts\TestDelegate2.cs" />
     <Compile Include="Assets\Scripts\ClickDestroy.cs" />
     <Compile Include="Assets\Scripts\PaddleController.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Assets\Scripts\LoseZone.cs" />
     <Compile Include="Assets\Scripts\BallCollisionHandler.cs" />
     <Compile Include="Assets\Scripts\IHitBallResponder.cs" />
+    <Compile Include="Assets\Scripts\GameInitializer.cs" />
     <Compile Include="Assets\Scripts\BallController.cs" />
     <Compile Include="Assets\Scripts\Brick.cs" />
     <Reference Include="UnityEngine">
