@@ -7,7 +7,7 @@ public interface IDamageable
 
 public class Brick : MonoBehaviour, IBallHitResponder
 {
-    public void HandleBallHit(Rigidbody ballRigidbody, ContactPoint contactPoint)
+    public void HandleBallHit(ContactPoint contactPoint)
     {
         TakeDamage();
     }

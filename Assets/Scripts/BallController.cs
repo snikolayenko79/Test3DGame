@@ -4,15 +4,21 @@ public class BallController : MonoBehaviour
 {
     [SerializeField] private BallMovement ballMovement;
     [SerializeField] private BallCollisionHandler collisionHandler;
-    private Rigidbody ballRigidbody;
-
-    private void Awake()
+    [SerializeField] private PaddleController paddle; // Ссылка на платформу на сцене
+    
+    private void OnEnable()
     {
-        ballRigidbody = ballMovement.GetComponent<Rigidbody>();
+        collisionHandler.OnBallCollision += HandleCollision;
+        if (paddle != null)
+            paddle.OnBallHitPaddle += RedirectBall;
     }
 
-    private void OnEnable() => collisionHandler.OnBallCollision += HandleCollision;
-    private void OnDisable() => collisionHandler.OnBallCollision -= HandleCollision;
+    private void OnDisable()
+    {
+        collisionHandler.OnBallCollision -= HandleCollision;
+        if (paddle != null)
+            paddle.OnBallHitPaddle -= RedirectBall;
+    }
 
     private void Start()
     {
@@ -29,7 +35,16 @@ public class BallController : MonoBehaviour
         if (collision.gameObject.TryGetComponent<IBallHitResponder>(out var responder))
         {
             // Просто передаем управление самому объекту
-            responder.HandleBallHit(ballRigidbody, contact);
+            responder.HandleBallHit(contact);
         }
+    }
+    
+    private void RedirectBall(float hitPoint)
+    {
+        // Вся логика изменения скорости инкапсулирована здесь
+        Vector3 currentVelocity = ballMovement.GetComponent<Rigidbody>().linearVelocity.normalized;
+        currentVelocity.x = -hitPoint * 2f;
+        
+        ballMovement.Launch(currentVelocity);
     }
 }

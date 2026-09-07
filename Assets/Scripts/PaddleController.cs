@@ -1,10 +1,14 @@
 using UnityEngine;
+using System;
 
 public class PaddleController : MonoBehaviour, IBallHitResponder
 {
     public float speed = 15f;
     public float movementLimit = 7f; // Ограничение, чтобы не выехать за стены
     [SerializeField] private float RedirectInfluence = 2f;
+    
+    // Событие передает координату X точки удара относительно центра платформы
+    public event Action<float> OnBallHitPaddle;
     
     void Update()
     {
@@ -15,19 +19,12 @@ public class PaddleController : MonoBehaviour, IBallHitResponder
         newPosition.x = Mathf.Clamp(newPosition.x, -movementLimit, movementLimit);
         transform.position = newPosition;
     }
-    
-    public void HandleBallHit(Rigidbody ballRigidbody, ContactPoint contactPoint)
+
+    public void HandleBallHit(ContactPoint contactPoint)
     {
-        // Считаем смещение от центра платформы
-        float hitPoint = transform.position.x - ballRigidbody.transform.position.x;
-        
-        Vector3 currentVelocity = ballRigidbody.linearVelocity;
-        currentVelocity.x = -hitPoint * RedirectInfluence;
-        
-        // Пересчитываем скорость через компонент движения мяча
-        if (ballRigidbody.TryGetComponent<BallMovement>(out var movement))
-        {
-            movement.Launch(currentVelocity);
-        }
+        float hitPoint = transform.position.x - contactPoint.point.x;
+
+        // Просто сообщаем миру: "В нас ударились вот в этой точке"
+        OnBallHitPaddle?.Invoke(hitPoint);
     }
 }
