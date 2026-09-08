@@ -2451,6 +2451,8 @@ GameObject:
   - component: {fileID: 1309773083}
   - component: {fileID: 1309773082}
   - component: {fileID: 1309773084}
+  - component: {fileID: 1309773086}
+  - component: {fileID: 1309773085}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2501,6 +2503,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameInitializer
   paddle: {fileID: 96848432}
+--- !u!114 &1309773085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309773081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 170b28af0e263a74ea636b0bf6564e37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewInputSystemSource
+--- !u!114 &1309773086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309773081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f6f5a3b5b770f444bf165c7d7fd30b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+  InputSource: {fileID: 1309773085}
 --- !u!1 &1340230055
 GameObject:
   m_ObjectHideFlags: 0

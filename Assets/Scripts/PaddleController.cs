@@ -16,6 +16,11 @@ public class PaddleController : MonoBehaviour, IBallHitResponder
     {
         rb = GetComponent<Rigidbody>();
     }
+
+    void Start()
+    {
+        InitializeInput((InputManager.Instance.GameplayInput));
+    }
     
     public void InitializeInput(IInputEventSource source)
     {

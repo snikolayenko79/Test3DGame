@@ -57,6 +57,7 @@
     <Compile Include="Assets\Scripts\LoseZone.cs" />
     <Compile Include="Assets\Scripts\BallCollisionHandler.cs" />
     <Compile Include="Assets\Scripts\IHitBallResponder.cs" />
+    <Compile Include="Assets\Scripts\Input\InputManager.cs" />
     <Compile Include="Assets\Scripts\GameInitializer.cs" />
     <Compile Include="Assets\Scripts\Input\NewInputSystemSource.cs" />
     <Compile Include="Assets\Scripts\BallController.cs" />
