@@ -1,10 +1,19 @@
 using UnityEngine;
+using Zenject;
 
 public class BallController : MonoBehaviour
 {
-    [SerializeField] private BallMovement ballMovement;
     [SerializeField] private BallCollisionHandler collisionHandler;
-    [SerializeField] private PaddleController paddle; // Ссылка на платформу на сцене
+    private BallMovement ballMovement;
+    private PaddleController paddle;
+    
+    // Внедряем зависимости через Zenject метода-конструктора
+    [Inject]
+    public void Construct(BallMovement movement, PaddleController paddleInstance)
+    {
+        this.ballMovement = movement;
+        this.paddle = paddleInstance;
+    }
     
     private void OnEnable()
     {

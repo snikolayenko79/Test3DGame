@@ -425,7 +425,6 @@ GameObject:
   - component: {fileID: 96848428}
   - component: {fileID: 96848433}
   - component: {fileID: 96848432}
-  - component: {fileID: 96848434}
   m_Layer: 0
   m_Name: Paddle
   m_TagString: Untagged
@@ -567,18 +566,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 124
   m_CollisionDetection: 0
---- !u!114 &96848434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 96848427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 170b28af0e263a74ea636b0bf6564e37, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewInputSystemSource
 --- !u!1 &118126094
 GameObject:
   m_ObjectHideFlags: 0
@@ -1940,6 +1927,85 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48c5b02c59699004fa0781847bc688e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Brick
+--- !u!1 &1011671507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1011671510}
+  - component: {fileID: 1011671509}
+  - component: {fileID: 1011671508}
+  m_Layer: 0
+  m_Name: SceneContext
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1011671508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011671507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27cdae3def16e7446a4f890301a3b7ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSceneInstaller
+  paddleInstance: {fileID: 96848432}
+  ballInstance: {fileID: 50954436}
+--- !u!114 &1011671509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011671507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Zenject::Zenject.SceneContext
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 1011671508}
+  _installerPrefabs: []
+  _autoRun: 1
+  OnPreInstall:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostInstall:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPreResolve:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostResolve:
+    m_PersistentCalls:
+      m_Calls: []
+  _parentNewObjectsUnderSceneContext: 0
+  _contractNames: []
+  _parentContractNames: []
+--- !u!4 &1011671510
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011671507}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1031845333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2450,9 +2516,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1309773083}
   - component: {fileID: 1309773082}
-  - component: {fileID: 1309773084}
-  - component: {fileID: 1309773086}
-  - component: {fileID: 1309773085}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2472,9 +2535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e891af61287fe548b5699e252f1d124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallController
-  ballMovement: {fileID: 50954436}
   collisionHandler: {fileID: 50954437}
-  paddle: {fileID: 96848432}
 --- !u!4 &1309773083
 Transform:
   m_ObjectHideFlags: 0
@@ -2490,44 +2551,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1309773084
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1309773081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3739ce95de417a646a0cdee41a5a36a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameInitializer
-  paddle: {fileID: 96848432}
---- !u!114 &1309773085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1309773081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 170b28af0e263a74ea636b0bf6564e37, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewInputSystemSource
---- !u!114 &1309773086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1309773081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f6f5a3b5b770f444bf165c7d7fd30b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputManager
-  InputSource: {fileID: 1309773085}
 --- !u!1 &1340230055
 GameObject:
   m_ObjectHideFlags: 0
@@ -3926,3 +3949,4 @@ SceneRoots:
   - {fileID: 978127084}
   - {fileID: 1241195572}
   - {fileID: 1309773083}
+  - {fileID: 1011671510}

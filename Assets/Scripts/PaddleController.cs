@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Zenject;
 
 public class PaddleController : MonoBehaviour, IBallHitResponder
 {
@@ -12,28 +13,18 @@ public class PaddleController : MonoBehaviour, IBallHitResponder
     
     private Rigidbody rb;
     
+    // Zenject автоматически вызовет этот метод ДО того, как сработают Start или Update.
+    // Сюда прилетит именно та реализация ввода, которую мы зарегистрировали в инсталляторе.
+    [Inject]
+    public void Construct(IInputEventSource source)
+    {
+        this.inputSource = source;
+        this.inputSource.OnHorizontalMovementChanged += UpdateDirection;
+    }
+    
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-    }
-
-    void Start()
-    {
-        InitializeInput((InputManager.Instance.GameplayInput));
-    }
-    
-    public void InitializeInput(IInputEventSource source)
-    {
-        // Отписываемся от старого источника, если он был
-        if (inputSource != null)
-            inputSource.OnHorizontalMovementChanged -= UpdateDirection;
-
-        inputSource = source;
-        
-        // Подписываемся на события нового ввода
-        inputSource.OnHorizontalMovementChanged += UpdateDirection;
-        
-        bInputInitialized = true;
     }
     
     private void UpdateDirection(float direction)
