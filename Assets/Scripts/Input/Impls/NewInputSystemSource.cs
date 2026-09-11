@@ -5,6 +5,7 @@ using UnityEngine.InputSystem; // Обязательный namespace для но
 public class NewInputSystemSource : MonoBehaviour, IInputEventSource, GameControls.IGameplayActions
 {
     public event Action<float> OnHorizontalMovementChanged;
+    public event Action OnActionTriggered;
 
     private GameControls controls;
     private float lastDirection = 0f;

@@ -5,6 +5,7 @@ public class KeyboardInputSource : MonoBehaviour, IInputEventSource
 {
     // Событие передает направление движения (-1, 0, 1) каждый раз, когда оно меняется
     public event Action<float> OnHorizontalMovementChanged;
+    public event Action OnActionTriggered;
 
     private float lastInput = 0f;
     

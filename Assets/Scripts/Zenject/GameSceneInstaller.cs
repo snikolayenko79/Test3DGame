@@ -9,6 +9,11 @@ public class GameSceneInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        Container.Bind<TargetRegistry>().AsSingle();
+        
+        // Магия Zenject: один менеджер закроет потребности и IScoreAdder, и IScoreReader
+        Container.BindInterfacesTo<ScoreManager>().AsSingle();
+        
         // Привязываем платформу со сцены
         Container.Bind<PaddleController>()
             .FromInstance(paddleInstance)

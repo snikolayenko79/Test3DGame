@@ -8,8 +8,6 @@ public class PaddleController : MonoBehaviour, IBallHitResponder
     public float movementLimit = 7f; // Ограничение, чтобы не выехать за стены
     private float currentDirection = 0f;
     private IInputEventSource inputSource;
-
-    private bool bInputInitialized = false;
     
     private Rigidbody rb;
     
@@ -18,6 +16,9 @@ public class PaddleController : MonoBehaviour, IBallHitResponder
     [Inject]
     public void Construct(IInputEventSource source)
     {
+        if (inputSource != null)
+            this.inputSource.OnHorizontalMovementChanged -= UpdateDirection;
+        
         this.inputSource = source;
         this.inputSource.OnHorizontalMovementChanged += UpdateDirection;
     }
@@ -46,7 +47,7 @@ public class PaddleController : MonoBehaviour, IBallHitResponder
     
     private void OnDestroy()
     {
-        if (inputSource != null && bInputInitialized)
+        if (inputSource != null)
             inputSource.OnHorizontalMovementChanged -= UpdateDirection;
     }
 

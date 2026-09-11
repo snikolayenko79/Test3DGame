@@ -13,6 +13,9 @@ public class BallMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         currentSpeed = baseSpeed;
+        
+        // Мяч стоит на месте, пока мы не вызовем Launch
+        rb.linearVelocity = Vector3.zero; 
     }
 
     public void Launch(Vector3 direction)
