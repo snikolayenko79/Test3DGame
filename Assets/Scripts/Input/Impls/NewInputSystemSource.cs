@@ -44,4 +44,9 @@ public class NewInputSystemSource : MonoBehaviour, IInputEventSource, GameContro
             OnHorizontalMovementChanged?.Invoke(currentDirection);
         }
     }
+    
+    public void OnAction(InputAction.CallbackContext context)
+    {
+        
+    }
 }

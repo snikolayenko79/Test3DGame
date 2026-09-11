@@ -74,4 +74,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f37c4d0b60b1cc4c893c8dc3b634db6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectInputInstaller
-  InputPrefab: {fileID: 9083190180925353500, guid: 689f6728fa2d03645b94ce4aa3614d9f, type: 3}
+  InputPrefab: {fileID: -5307938282920987217, guid: 689f6728fa2d03645b94ce4aa3614d9f, type: 3}
