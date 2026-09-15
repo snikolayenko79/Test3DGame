@@ -7,7 +7,7 @@
             "id": "5f7d450d-68cf-4caa-bc22-09faf5083fbf",
             "actions": [
                 {
-                    "name": "MoveX",
+                    "name": "MoveP1",
                     "type": "Value",
                     "id": "510baf06-e08f-4fa9-8112-2f3e85574dba",
                     "expectedControlType": "Axis",
@@ -17,9 +17,29 @@
                     "priority": 0
                 },
                 {
-                    "name": "Action",
+                    "name": "MoveP2",
+                    "type": "Value",
+                    "id": "b835421e-02ca-4547-8f05-b91190ecb377",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "ActionP1",
                     "type": "Button",
                     "id": "cd9d0e4a-e719-4d1a-8c64-6c07071e54ea",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "ActionP2",
+                    "type": "Button",
+                    "id": "71e8590d-2922-4de9-a402-fba96df6179c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -35,7 +55,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -46,7 +66,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP1",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -57,7 +77,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP1",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -68,40 +88,51 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP1",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
                 {
+                    "name": "",
+                    "id": "8e79daa2-3985-4fed-a884-4afb80ea03e0",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveP2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
                     "name": "1D Axis",
-                    "id": "5965ae67-d0bc-48d5-a047-9756f29a0b95",
+                    "id": "a33e398f-650a-4f49-92b3-d72a34bc6bd7",
                     "path": "1DAxis",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP2",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "negative",
-                    "id": "c6f0e742-37ae-4a3e-bb29-4cbf2d71d63d",
+                    "id": "2c5eb36d-c2c6-4ffd-84fd-205d2567e5d6",
                     "path": "<Keyboard>/leftArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP2",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
                 {
                     "name": "positive",
-                    "id": "8f4f45fa-b47e-481c-92da-06ea325bdabc",
+                    "id": "58ca4eae-976b-4f87-9989-98f2fe996e50",
                     "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveX",
+                    "action": "MoveP2",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -112,18 +143,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Action",
+                    "action": "ActionP1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "7fc2e2de-3017-45dd-8908-3e34a77e49dd",
+                    "id": "7dc5d321-fded-42a8-94a7-4dd623f42100",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Action",
+                    "action": "ActionP2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

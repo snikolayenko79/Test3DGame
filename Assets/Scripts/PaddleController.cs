@@ -2,55 +2,67 @@ using UnityEngine;
 using System;
 using Zenject;
 
-public class PaddleController : MonoBehaviour, IBallHitResponder
+public class PaddleController : MonoBehaviour, IHorizontalMovable, IBallHitResponder
 {
-    public float speed = 15f;
-    public float movementLimit = 7f; // Ограничение, чтобы не выехать за стены
-    private float currentDirection = 0f;
-    private IInputEventSource inputSource;
+    [Header("Movement Settings")]
+    [SerializeField] private float maxSpeed = 15f;
+    [SerializeField] private float acceleration = 50f; // Сила разгона
+    [SerializeField] private float deceleration = 40f; // Сила торможения (инерция)
+    [SerializeField] private float movementLimit = 7f;
+
+    private float targetDirection = 0f; // Куда игрок ХОЧЕТ двигаться (-1, 0, 1)
+    private float currentHorizontalSpeed = 0f; // Текущая плавная скорость платформы
     
     private Rigidbody rb;
-    
-    // Zenject автоматически вызовет этот метод ДО того, как сработают Start или Update.
-    // Сюда прилетит именно та реализация ввода, которую мы зарегистрировали в инсталляторе.
-    [Inject]
-    public void Construct(IInputEventSource source)
-    {
-        if (inputSource != null)
-            this.inputSource.OnHorizontalMovementChanged -= UpdateDirection;
-        
-        this.inputSource = source;
-        this.inputSource.OnHorizontalMovementChanged += UpdateDirection;
-    }
     
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
     
+    // Реализуем метод интерфейса IHorizontalMovable
+    public void SetMoveDirection(float direction)
+    {
+        targetDirection = direction;
+    }
+    
     private void UpdateDirection(float direction)
     {
-        currentDirection = direction;
+        targetDirection  = direction;
     }
 
     private void FixedUpdate()
     {
-        // Двигаем платформу через Rigidbody (физический способ)
-        Vector3 newVelocity = new Vector3(currentDirection * speed, 0f, 0f);
-        rb.linearVelocity = newVelocity; // В старых версиях: rb.velocity
+        // 1. Считаем целевую скорость, к которой мы стремимся
+        float targetSpeed = targetDirection * maxSpeed;
 
-        // Ограничиваем позицию у стен
+        // 2. Выбираем, что использовать: силу разгона или силу торможения
+        // Если игрок отпустил кнопку (targetSpeed == 0), плавно тормозим с силой deceleration.
+        // Если игрок жмет кнопку, плавно разгоняемся с силой acceleration.
+        float currentSpeedFactor = (Mathf.Approximately(targetSpeed, 0f)) ? deceleration : acceleration;
+
+        // 3. Плавно приближаем текущую скорость к целевой с учетом физического дельта-времени
+        currentHorizontalSpeed = Mathf.MoveTowards(
+            currentHorizontalSpeed, 
+            targetSpeed, 
+            currentSpeedFactor * Time.fixedDeltaTime
+        );
+
+        // 4. Применяем получившуюся плавную скорость к Rigidbody
+        rb.linearVelocity = new Vector3(currentHorizontalSpeed, 0f, 0f);
+
+        // 5. Ограничиваем позицию платформы у стен, чтобы она не вылетала за экран
         Vector3 clampedPosition = transform.position;
         clampedPosition.x = Mathf.Clamp(clampedPosition.x, -movementLimit, movementLimit);
+        
+        // Если уперлись в стену — сбрасываем накопленную скорость, чтобы не было "залипания"
+        if (Mathf.Approximately(clampedPosition.x, -movementLimit) || Mathf.Approximately(clampedPosition.x, movementLimit))
+        {
+            currentHorizontalSpeed = 0f;
+        }
+
         rb.MovePosition(clampedPosition);
     }
-    
-    private void OnDestroy()
-    {
-        if (inputSource != null)
-            inputSource.OnHorizontalMovementChanged -= UpdateDirection;
-    }
-
     // Событие передает координату X точки удара относительно центра платформы
     public event Action<float> OnBallHitPaddle;
     

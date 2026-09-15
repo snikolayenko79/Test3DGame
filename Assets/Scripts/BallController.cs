@@ -1,47 +1,57 @@
 using UnityEngine;
 using Zenject;
+using System.Collections.Generic;
 
-public class BallController : MonoBehaviour
+public class BallController : MonoBehaviour, IActionTriggerable
 {
     [SerializeField] private BallCollisionHandler collisionHandler;
-    private BallMovement ballMovement;
-    private PaddleController paddle;
-    private IInputEventSource inputSource;
+    // Ссылка на компонент движения, которую мы перетащим вручную в инспекторе
+    [SerializeField] private BallMovement ballMovement;
     private TargetRegistry _targetRegistry;
     
     // Флаг, который определяет: летит мяч или еще прилип к платформе
     private bool isLaunched = false;
     
+    private List<PaddleController> _allPaddles; // Список всех платформ в игре
+    
     // Внедряем зависимости через Zenject
     [Inject]
-    public void Construct(BallMovement movement, PaddleController paddleInstance, IInputEventSource input, TargetRegistry registry)
+    public void Construct(List<PaddleController> paddles, TargetRegistry registry)
     {
-        this.ballMovement = movement;
-        this.paddle = paddleInstance;
-        this.inputSource = input;
+        this._allPaddles = paddles;
         _targetRegistry = registry;
     }
     
     private void OnEnable()
     {
         collisionHandler.OnBallCollision += HandleCollision;
-        if (paddle != null)
-            paddle.OnBallHitPaddle += RedirectBall;
         
-        // Подписываемся на событие клика/действия из глобального ввода
-        if (inputSource != null)
-            inputSource.OnActionTriggered += TryLaunchBall;
+        // Подписываемся на события отскока от обеих платформ
+        if (_allPaddles != null)
+        {
+            foreach (var paddle in _allPaddles)
+            {
+                paddle.OnBallHitPaddle += RedirectBall;
+            }
+        }
         
         // Подписываемся на событие победы
         if (_targetRegistry != null)
-            _targetRegistry.OnAllTargetsDestroyed += HandleVictory;
+            _targetRegistry.OnAllTargetsDestroyed -= HandleVictory;
     }
 
     private void OnDisable()
     {
         collisionHandler.OnBallCollision -= HandleCollision;
-        if (paddle != null)
-            paddle.OnBallHitPaddle -= RedirectBall;
+        
+        // Подписываемся на события отскока от обеих платформ
+        if (_allPaddles != null)
+        {
+            foreach (var paddle in _allPaddles)
+            {
+                paddle.OnBallHitPaddle += RedirectBall;
+            }
+        }
         
         // Подписываемся на событие победы
         if (_targetRegistry != null)
@@ -51,6 +61,12 @@ public class BallController : MonoBehaviour
     private void Start()
     {
         
+    }
+    
+    // Реализуем метод интерфейса IActionTriggerable
+    public void ExecuteAction()
+    {
+        TryLaunchBall(); // Запускаем мяч
     }
     
     private void TryLaunchBall()
@@ -64,8 +80,7 @@ public class BallController : MonoBehaviour
         Vector3 launchDirection = new Vector3(5f, 0f, 10f);
         
         ballMovement.Launch(launchDirection);
-        
-        Debug.Log("Мяч успешно запущен по клику/пробелу!");
+        //Debug.Log("Мяч успешно запущен по клику/пробелу!");
     }
 
     
