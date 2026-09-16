@@ -1,23 +1,27 @@
 using UnityEngine;
 using System;
+using Unity.Netcode; // Подключаем NGO только для RPC
 using Zenject;
 
-public class PaddleController : MonoBehaviour, IHorizontalMovable, IBallHitResponder
+[RequireComponent(typeof(Rigidbody))]
+public class PaddleController : NetworkBehaviour, IHorizontalMovable, IBallHitResponder
 {
     [Header("Movement Settings")]
     [SerializeField] private float maxSpeed = 15f;
-    [SerializeField] private float acceleration = 50f; // Сила разгона
-    [SerializeField] private float deceleration = 40f; // Сила торможения (инерция)
+    [SerializeField] private float acceleration = 50f; 
+    [SerializeField] private float deceleration = 40f; 
     [SerializeField] private float movementLimit = 7f;
     
-    private MeshRenderer meshRenderer; // Ссылка на компонент отображения
-    [SerializeField] private Color activeColor = Color.green;    // Цвет активного игрока
-    [SerializeField] private Color inactiveColor = Color.gray;  // Цвет пассивного игрока
+    [Header("Visual Settings")]
+    [SerializeField] private MeshRenderer meshRenderer; 
+    [SerializeField] private Color activeColor = Color.green;    
+    [SerializeField] private Color inactiveColor = Color.gray;  
     
+    // В инспекторе у Левой платформы выберите Player1, у Правой — Player2
     [SerializeField] private PlayerMode selectedMode;
 
-    private float targetDirection = 0f; // Куда игрок ХОЧЕТ двигаться (-1, 0, 1)
-    private float currentHorizontalSpeed = 0f; // Текущая плавная скорость платформы
+    private float targetDirection = 0f; 
+    private float currentHorizontalSpeed = 0f; 
     
     private Rigidbody rb;
     private GameSettings gameSettings;
@@ -31,76 +35,98 @@ public class PaddleController : MonoBehaviour, IHorizontalMovable, IBallHitRespo
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        
-        // Вроде бы нельзя писать здесь. Awake может вызываться до Construct. Перенесено в Start.
-        //SetVisualState(gameSettings.SelectedMode == selectedMode);
+        if (meshRenderer == null) meshRenderer = GetComponent<MeshRenderer>();
     }
-    
+
     private void Start()
     {
-        // Перенесли логику сюда. К моменту вызова Start Zenject ГАРАНТИРОВАННО 
-        // внесет gameSettings, и мы избежим NullReferenceException!
-        if (gameSettings != null)
-        {
-            SetVisualState(gameSettings.SelectedMode == selectedMode);
-        }
+        // К моменту Start Zenject гарантированно внес настройки из меню.
+        // Каждая доска на ЛОКАЛЬНОМ компьютере красит себя сама на основе выбора в меню!
+        SetVisualState(gameSettings.SelectedMode == selectedMode);
     }
     
     public void SetVisualState(bool isActive)
     {
-        if (meshRenderer != null)
-        {
-            meshRenderer.material.color = isActive ? activeColor : inactiveColor;
-        }
+        if (meshRenderer != null) meshRenderer.material.color = isActive ? activeColor : inactiveColor;
     }
     
-    // Реализуем метод интерфейса IHorizontalMovable
     public void SetMoveDirection(float direction)
     {
+        // Локальный инпут: управляем только той доской, которую выбрали в меню
+        if (gameSettings.SelectedMode != selectedMode) return; 
         targetDirection = direction;
     }
-
+    
     private void FixedUpdate()
     {
-        // 1. Считаем целевую скорость, к которой мы стремимся
-        float targetSpeed = targetDirection * maxSpeed;
+        // Если эта доска НЕ выбрана в меню на этом компьютере, мы ЕЙ НЕ УПРАВЛЯЕМ.
+        // Её координаты будут плавно прилетать по сети через RPC от второго игрока!
+        if (gameSettings.SelectedMode != selectedMode) return;
 
-        // 2. Выбираем, что использовать: силу разгона или силу торможения
-        // Если игрок отпустил кнопку (targetSpeed == 0), плавно тормозим с силой deceleration.
-        // Если игрок жмет кнопку, плавно разгоняемся с силой acceleration.
+        // --- ВАШ ОРИГИНАЛЬНЫЙ ФИЗИЧЕСКИЙ РАСЧЕТ ДВИЖЕНИЯ ---
+        float targetSpeed = targetDirection * maxSpeed;
         float currentSpeedFactor = (Mathf.Approximately(targetSpeed, 0f)) ? deceleration : acceleration;
 
-        // 3. Плавно приближаем текущую скорость к целевой с учетом физического дельта-времени
         currentHorizontalSpeed = Mathf.MoveTowards(
             currentHorizontalSpeed, 
             targetSpeed, 
             currentSpeedFactor * Time.fixedDeltaTime
         );
 
-        // 4. Применяем получившуюся плавную скорость к Rigidbody
         rb.linearVelocity = new Vector3(currentHorizontalSpeed, 0f, 0f);
 
-        // 5. Ограничиваем позицию платформы у стен, чтобы она не вылетала за экран
         Vector3 clampedPosition = transform.position;
         clampedPosition.x = Mathf.Clamp(clampedPosition.x, -movementLimit, movementLimit);
         
-        // Если уперлись в стену — сбрасываем накопленную скорость, чтобы не было "залипания"
         if (Mathf.Approximately(clampedPosition.x, -movementLimit) || Mathf.Approximately(clampedPosition.x, movementLimit))
         {
             currentHorizontalSpeed = 0f;
         }
 
         rb.MovePosition(clampedPosition);
+
+        // --- СЕТЕВОЙ СИНХРОН ---
+        // Так как мы сдвинули НАШУ доску физикой, мы отправляем её новые координаты по сети!
+        if (IsServer)
+        {
+            // Если мы Хост — отправляем координаты Клиенту
+            SyncPositionClientRpc(transform.position);
+        }
+        else if (IsClient)
+        {
+            // Если мы Клиент — отправляем координаты Хосту (через Сервер)
+            SyncPositionServerRpc(transform.position);
+        }
     }
-    // Событие передает координату X точки удара относительно центра платформы
+
+    // КЛИЕНТ отправляет координаты СЕРВЕРУ
+    [ServerRpc(RequireOwnership = false)]
+    private void SyncPositionServerRpc(Vector3 newPosition)
+    {
+        // Сервер принимает координаты от Клиента и двигает правую доску у себя на экране
+        transform.position = newPosition;
+
+        // И сразу же пересылает эти координаты ВСЕМ остальным (если бы игроков было больше)
+        SyncPositionClientRpc(newPosition);
+    }
+
+    // СЕРВЕР рассылает координаты ВСЕМ КЛИЕНТАМ
+    [ClientRpc]
+    private void SyncPositionClientRpc(Vector3 newPosition)
+    {
+        // Если этот компьютер НЕ управляет этой доской (она чужая для него), 
+        // он просто плавно перемещает её туда, куда приказала сеть!
+        if (gameSettings.SelectedMode != selectedMode)
+        {
+            transform.position = newPosition;
+        }
+    }
+
     public event Action<float> OnBallHitPaddle;
-    
     public void HandleBallHit(ContactPoint contactPoint)
     {
+        if (!IsServer) return;
         float hitPoint = transform.position.x - contactPoint.point.x;
-
-        // Просто сообщаем миру: "В нас ударились вот в этой точке"
         OnBallHitPaddle?.Invoke(hitPoint);
     }
 }
