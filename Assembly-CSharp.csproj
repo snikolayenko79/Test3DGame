@@ -52,8 +52,10 @@
     <Compile Include="Assets\Scripts\Input\IInputEventSource.cs" />
     <Compile Include="Assets\Scripts\Input\InputRouter.cs" />
     <Compile Include="Assets\Scripts\TestDelegate2.cs" />
+    <Compile Include="Assets\Scripts\Zenject\MainMenuInstaller.cs" />
     <Compile Include="Assets\Scripts\Input\Impls\NewInputSystemSource.cs" />
     <Compile Include="Assets\Scripts\ClickDestroy.cs" />
+    <Compile Include="Assets\Scripts\GameSettings.cs" />
     <Compile Include="Assets\Scripts\Input\Impls\AdvancedInputSourceWithActionsName.cs" />
     <Compile Include="Assets\Scripts\GameplayTargets\Impls\Brick.cs" />
     <Compile Include="Assets\Scripts\PaddleController.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="Assets\Scripts\LoseZone.cs" />
     <Compile Include="Assets\Scripts\Input\UnityInput\GameControls.cs" />
     <Compile Include="Assets\Scripts\Input\IActionTriggerable.cs" />
+    <Compile Include="Assets\Scripts\UI\MainMenuController.cs" />
     <Compile Include="Assets\Scripts\BallCollisionHandler.cs" />
     <Compile Include="Assets\Scripts\Input\Impls\AdvancedInputSource.cs" />
     <Compile Include="Assets\Scripts\GameplayTargets\IGameplayTarget.cs" />

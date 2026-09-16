@@ -9,26 +9,56 @@ public class PaddleController : MonoBehaviour, IHorizontalMovable, IBallHitRespo
     [SerializeField] private float acceleration = 50f; // Сила разгона
     [SerializeField] private float deceleration = 40f; // Сила торможения (инерция)
     [SerializeField] private float movementLimit = 7f;
+    
+    private MeshRenderer meshRenderer; // Ссылка на компонент отображения
+    [SerializeField] private Color activeColor = Color.green;    // Цвет активного игрока
+    [SerializeField] private Color inactiveColor = Color.gray;  // Цвет пассивного игрока
+    
+    [SerializeField] private PlayerMode selectedMode;
 
     private float targetDirection = 0f; // Куда игрок ХОЧЕТ двигаться (-1, 0, 1)
     private float currentHorizontalSpeed = 0f; // Текущая плавная скорость платформы
     
     private Rigidbody rb;
+    private GameSettings gameSettings;
+
+    [Inject]
+    public void Construct(GameSettings _gameSettings)
+    {
+        gameSettings = _gameSettings;
+    }
     
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        
+        // Вроде бы нельзя писать здесь. Awake может вызываться до Construct. Перенесено в Start.
+        //SetVisualState(gameSettings.SelectedMode == selectedMode);
+    }
+    
+    private void Start()
+    {
+        // Перенесли логику сюда. К моменту вызова Start Zenject ГАРАНТИРОВАННО 
+        // внесет gameSettings, и мы избежим NullReferenceException!
+        if (gameSettings != null)
+        {
+            SetVisualState(gameSettings.SelectedMode == selectedMode);
+        }
+    }
+    
+    public void SetVisualState(bool isActive)
+    {
+        if (meshRenderer != null)
+        {
+            meshRenderer.material.color = isActive ? activeColor : inactiveColor;
+        }
     }
     
     // Реализуем метод интерфейса IHorizontalMovable
     public void SetMoveDirection(float direction)
     {
         targetDirection = direction;
-    }
-    
-    private void UpdateDirection(float direction)
-    {
-        targetDirection  = direction;
     }
 
     private void FixedUpdate()

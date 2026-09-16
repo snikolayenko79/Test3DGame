@@ -711,6 +711,9 @@ MonoBehaviour:
   acceleration: 50
   deceleration: 40
   movementLimit: 7
+  activeColor: {r: 0.083704166, g: 0.5377358, b: 0.083704166, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  selectedMode: 0
 --- !u!54 &96848433
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2827,6 +2830,9 @@ MonoBehaviour:
   acceleration: 50
   deceleration: 40
   movementLimit: 7
+  activeColor: {r: 0.4156863, g: 0.3529412, b: 0.8039216, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  selectedMode: 1
 --- !u!54 &1085367719
 Rigidbody:
   m_ObjectHideFlags: 0

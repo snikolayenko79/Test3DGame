@@ -5,6 +5,8 @@ public class ProjectInputInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
+        Container.Bind<GameSettings>().AsSingle().NonLazy();
+        
         // 1. Принудительно загружаем физические префабы из папки Resources методами самой Unity
         GameObject inputPrefab1 = Resources.Load<GameObject>("InputP1");
         GameObject inputPrefab2 = Resources.Load<GameObject>("InputP2");
@@ -13,20 +15,9 @@ public class ProjectInputInstaller : MonoInstaller
         if (inputPrefab1 == null) Debug.LogError("Zenject: Не удалось найти префаб InputP1 в папке Resources!");
         if (inputPrefab2 == null) Debug.LogError("Zenject: Не удалось найти префаб InputP2 в папке Resources!");
 
-        // 2. Биндим Игрока 1 через явный приказ создать Prefab в памяти
-        Container.Bind<IInputEventSource>()
-            .To<AdvancedInputSourceWithActionsName>()
-            .FromComponentInNewPrefab(inputPrefab1) // Явно отдаем загруженный Unity-объект
-            .UnderTransformGroup("GlobalManagers")   // Упаковываем в красивую папку в иерархии
-            .AsCached()
-            .NonLazy(); // Теперь этот NonLazy сработает на 100%, так как Zenject видит физический префаб
-
-        // 3. Биндим Игрока 2
-        Container.Bind<IInputEventSource>()
-            .To<AdvancedInputSourceWithActionsName>()
-            .FromComponentInNewPrefab(inputPrefab2)
-            .UnderTransformGroup("GlobalManagers")
-            .AsCached()
-            .NonLazy();
+        // Регистрируем с ID, но БЕЗ .NonLazy(). 
+        // Объект создастся на сцене DontDestroyOnLoad только тогда, когда мы его попросим.
+        Container.Bind<IInputEventSource>().WithId("P1").To<AdvancedInputSourceWithActionsName>().FromComponentInNewPrefab(inputPrefab1).AsCached();
+        Container.Bind<IInputEventSource>().WithId("P2").To<AdvancedInputSourceWithActionsName>().FromComponentInNewPrefab(inputPrefab2).AsCached();
     }
 }

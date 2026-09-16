@@ -28,8 +28,6 @@ public class InputRouter : IInitializable, IDisposable
         // Находим реальное количество игроков по минимальному размеру списков
         int playersCount = Mathf.Min(_inputs.Count, _movables.Count);
         
-        Debug.Log(playersCount);
-        
         for (int i = 0; i < playersCount; i++)
         {
             var input = _inputs[i];
