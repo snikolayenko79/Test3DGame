@@ -1,54 +1,38 @@
 using UnityEngine;
 using Zenject;
-
-public interface IDamageable
-{
-    void TakeDamage();
-}
+using Unity.Netcode;
 
 public class Brick : MonoBehaviour, IBallHitResponder, IGameplayTarget
 {
-    [SerializeField] private int scoreValue = 100; // Сколько очков дает этот кирпич
+    [SerializeField] private int scorePoints = 10; 
     
-    private TargetRegistry _registry;
-    private IScoreAdder _scoreAdder;
+    // Уникальный номер кирпича на сцене (0, 1, 2, 3...)
+    public int BrickId { get; set; } 
 
-    [Inject]
-    public void Construct(TargetRegistry registry, IScoreAdder  scoreAdder)
+    private LevelManager _levelManager;
+
+    // Передаем ссылку на менеджер уровня
+    public void Initialize(int id, LevelManager levelManager)
     {
-        _registry = registry;
-        _scoreAdder = scoreAdder;
+        BrickId = id;
+        _levelManager = levelManager;
     }
 
-    private void Start()
+    // Этот метод вызывается общим мячом строго на Сервере/Хосте
+    public void HandleBallHit(ContactPoint contactPoint)
     {
-        // Кирпич появился на сцене (или заспавнился) -> сам записался в реестр
-        _registry.Register(this);
+        Hit();
+    }
+
+    public void DisableBrick()
+    {
+        gameObject.SetActive(false);
     }
     
     // Реализация интерфейса IGameplayTarget
     public void Hit()
     {
-        // Здесь можно уменьшать жизни кирпича, если он прочный. 
-        // Но пока что ломаем с одного удара:
-        OnBrickDestroyed();
-    }
-
-    private void OnBrickDestroyed()
-    {
-        // Перед уничтожением выписываем себя из реестра мишеней
-        _registry.Unregister(this);
-        
-        Debug.Log($"Кирпич {gameObject.name} уничтожен!");
-        Destroy(gameObject);
-        
-        _scoreAdder.AddScore(scoreValue);
-    }
-
-    // Реализация интерфейса отскока мяча из прошлых шагов.
-    // Когда мяч бьется о кирпич, кирпич сам реагирует на удар!
-    public void HandleBallHit(ContactPoint contactPoint)
-    {
-        Hit();
+        // Просто сообщаем менеджеру: "Кирпич с моим ID был уничтожен!"
+        _levelManager?.DestroyBrickServer(BrickId, scorePoints);
     }
 }

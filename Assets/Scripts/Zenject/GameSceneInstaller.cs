@@ -10,10 +10,13 @@ public class GameSceneInstaller : MonoInstaller
     [Header("Один общий Мяч")]
     [SerializeField] private BallController generalBall;
     
+    [SerializeField] private ScoreManager scoreManager;
+    
     public override void InstallBindings()
     {
         Container.Bind<TargetRegistry>().AsSingle();
-        Container.BindInterfacesTo<ScoreManager>().AsSingle();
+        Container.Bind<IScoreAdder>().FromInstance(scoreManager).AsCached();
+        Container.Bind<IScoreReader>().FromInstance(scoreManager).AsCached();
 
         // МАГИЯ ZENJECT: Вместо Construct мы достаем настройки прямо из контейнера!
         // Zenject заглянет в ProjectContext и найдет там наш сохраненный GameSettings

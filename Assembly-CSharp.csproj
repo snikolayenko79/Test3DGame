@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scripts\BallController.cs" />
     <Compile Include="Assets\Scripts\UI\BricksCounterUI.cs" />
     <Compile Include="Assets\Scripts\GameplayTargets\TargetRegistry.cs" />
+    <Compile Include="Assets\Scripts\LevelManager.cs" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile-2-Pass.shader" />
