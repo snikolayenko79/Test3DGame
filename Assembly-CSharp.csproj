@@ -913,11 +913,11 @@
     <Reference Include="Unity.AI.Navigation">
       <HintPath>D:\Work\GitHub\Test3DGame\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
-      <HintPath>D:\Work\GitHub\Test3DGame\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Netcode.Runtime">
       <HintPath>D:\Work\GitHub\Test3DGame\Library\ScriptAssemblies\Unity.Netcode.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
+      <HintPath>D:\Work\GitHub\Test3DGame\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem.ForUI.Editor">
       <HintPath>D:\Work\GitHub\Test3DGame\Library\ScriptAssemblies\Unity.InputSystem.ForUI.Editor.dll</HintPath>
