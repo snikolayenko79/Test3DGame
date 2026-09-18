@@ -88,22 +88,26 @@ public class PaddleController : NetworkBehaviour, IHorizontalMovable, IBallHitRe
 
         rb.MovePosition(clampedPosition);
 
-        // --- СЕТЕВОЙ СИНХРОН ---
-        // Так как мы сдвинули НАШУ доску физикой, мы отправляем её новые координаты по сети!
-        if (IsServer)
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
         {
-            // Если мы Хост — отправляем координаты Клиенту
-            SyncPositionClientRpc(transform.position);
-        }
-        else if (IsClient)
-        {
-            // Если мы Клиент — отправляем координаты Хосту (через Сервер)
-            SyncPositionServerRpc(transform.position);
+            // --- СЕТЕВОЙ СИНХРОН ---
+            // Так как мы сдвинули НАШУ доску физикой, мы отправляем её новые координаты по сети!
+            if (IsServer)
+            {
+                // Если мы Хост — отправляем координаты Клиенту
+                SyncPositionClientRpc(transform.position);
+            }
+            else if (IsClient)
+            {
+                // Если мы Клиент — отправляем координаты Хосту (через Сервер)
+                SyncPositionServerRpc(transform.position);
+            }
         }
     }
 
     // КЛИЕНТ отправляет координаты СЕРВЕРУ
-    [ServerRpc(RequireOwnership = false)]
+    //[ServerRpc(RequireOwnership = false)] устарело
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void SyncPositionServerRpc(Vector3 newPosition)
     {
         // Сервер принимает координаты от Клиента и двигает правую доску у себя на экране
@@ -114,7 +118,8 @@ public class PaddleController : NetworkBehaviour, IHorizontalMovable, IBallHitRe
     }
 
     // СЕРВЕР рассылает координаты ВСЕМ КЛИЕНТАМ
-    [ClientRpc]
+    //[ClientRpc] устарело
+    [Rpc(SendTo.ClientsAndHost)]
     private void SyncPositionClientRpc(Vector3 newPosition)
     {
         // Если этот компьютер НЕ управляет этой доской (она чужая для него), 
