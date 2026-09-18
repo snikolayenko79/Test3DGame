@@ -42,7 +42,9 @@ public class PaddleController : NetworkBehaviour, IHorizontalMovable, IBallHitRe
     {
         // К моменту Start Zenject гарантированно внес настройки из меню.
         // Каждая доска на ЛОКАЛЬНОМ компьютере красит себя сама на основе выбора в меню!
-        SetVisualState(gameSettings.SelectedMode == selectedMode);
+        bool bSelected = gameSettings.SelectedMode == selectedMode;
+        SetVisualState(bSelected);
+        rb.isKinematic = !bSelected;
     }
     
     public void SetVisualState(bool isActive)
@@ -61,7 +63,8 @@ public class PaddleController : NetworkBehaviour, IHorizontalMovable, IBallHitRe
     {
         // Если эта доска НЕ выбрана в меню на этом компьютере, мы ЕЙ НЕ УПРАВЛЯЕМ.
         // Её координаты будут плавно прилетать по сети через RPC от второго игрока!
-        if (gameSettings.SelectedMode != selectedMode) return;
+        if (gameSettings.SelectedMode != selectedMode)
+            return;
 
         // --- ВАШ ОРИГИНАЛЬНЫЙ ФИЗИЧЕСКИЙ РАСЧЕТ ДВИЖЕНИЯ ---
         float targetSpeed = targetDirection * maxSpeed;
@@ -125,7 +128,9 @@ public class PaddleController : NetworkBehaviour, IHorizontalMovable, IBallHitRe
     public event Action<float> OnBallHitPaddle;
     public void HandleBallHit(ContactPoint contactPoint)
     {
-        if (!IsServer) return;
+        if (!IsServer)
+            return;
+        
         float hitPoint = transform.position.x - contactPoint.point.x;
         OnBallHitPaddle?.Invoke(hitPoint);
     }
